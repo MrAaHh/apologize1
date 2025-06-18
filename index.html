@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>和好模拟器</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fff5f5;
+            transition: background-color 0.5s;
+        }
+        
+        .header {
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+            min-height: 60px;
+        }
+        
+        .emoji {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 600px;
+            flex-wrap: wrap;
+        }
+        
+        .red-btn {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .blue-btn {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);width: 120px; /* 固定宽度 */
+            height: 80px;
+            align-items: flex-end;  
+            flex: 1;               /* 等宽分配空间 */
+  min-width: 0; 
+ 
+        }
+        
+        .footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #888;
+        }
+        
+        /* 和好后的场景样式 */
+        .happy-scene {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .happy-text {
+            font-size: 24px;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+        
+        .cartoon-image {
+            width: 300px;
+            height: 300px;
+            background-color: #ffd6e7;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bear {
+            width: 100px;
+            height: 100px;
+            background-color: #8B4513;
+            border-radius: 50%;
+            position: absolute;
+            left: 50px;
+            z-index: 2;
+        }
+        
+        .panda {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            right: 50px;
+            z-index: 2;
+        }
+        
+        .panda-eye {
+            width: 20px;
+            height: 20px;
+            background-color: black;
+            border-radius: 50%;
+            position: absolute;
+            top: 30px;
+        }
+        
+        .panda-eye.left {
+            left: 25px;
+        }
+        
+        .panda-eye.right {
+            right: 25px;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 30px;
+            color: #ff6b6b;
+            animation: float 3s infinite ease-in-out;
+            z-index: 1;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        
+        .teddy-bear {
+            width: 40px;
+            height: 40px;
+            background-color: #8B4513;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            z-index: 3;
+        }
+    </style>
+</head>
+<body>
+    <div id="initialScene">
+        <div class="emoji">😊</div>
+        <div class="header">可以跟我和好吗？</div>
+        
+        <div class="buttons-container">
+            <button class="red-btn" id="redBtn">和好</button>
+            <button class="blue-btn" id="blueBtn">不要</button>
+        </div>
+        
+        <div class="footer"></div>
+    </div>
+    
+    <div id="happyScene" class="happy-scene">
+        <div class="happy-text">嗯嗯，我就知道你会原谅我</div>
+        <div class="cartoon-image">
+            <div class="bear"></div>
+            <div class="panda">
+                <div class="panda-eye left"></div>
+                <div class="panda-eye right"></div>
+            </div>
+            <div class="teddy-bear"></div>
+            <div class="heart" style="left: 120px; top: 100px;">❤️</div>
+            <div class="heart" style="left: 150px; top: 80px; animation-delay: 0.5s;">❤️</div>
+            <div class="heart" style="left: 100px; top: 90px; animation-delay: 1s;">❤️</div>
+        </div>
+    </div>
+    
+    <script>
+        const blueBtn = document.getElementById('blueBtn');
+        const redBtn = document.getElementById('redBtn');
+        const emoji = document.querySelector('.emoji');
+        const header = document.querySelector('.header');
+        const initialScene = document.getElementById('initialScene');
+        const happyScene = document.getElementById('happyScene');
+        
+        const responses = [
+            { text: "佳最好了", emoji: "🥺" },
+            { text: "佳天天开心", emoji: "😊" },
+            { text: "佳跟我嘻嘻", emoji: "🧋" },
+            { text: "请你喝奶茶", emoji: "🧋" },
+            { text: "不许点这里", emoji: "🤭" },
+            { text: "原谅我好不好", emoji: "🥹" },
+            { text: "和好子", emoji: "😊" }
+        ];
+        
+        let currentResponse = 0;
+        
+        // 蓝色按钮点击事件 - 改变文字和表情
+        blueBtn.addEventListener('click', function() {
+            // 更新蓝色按钮文字
+            blueBtn.textContent = responses[currentResponse].text;
+            // 更新emoji
+            emoji.textContent = responses[currentResponse].emoji;
+            
+            // 循环responses数组
+            currentResponse = (currentResponse + 1) % responses.length;
+            
+            // 红色按钮明显变大（增加更多尺寸）
+            const currentFontSize = parseInt(window.getComputedStyle(redBtn).fontSize);
+            const currentPadding = parseInt(window.getComputedStyle(redBtn).padding);
+            
+            redBtn.style.fontSize = (currentFontSize + 8) + 'px';
+            redBtn.style.padding = (currentPadding + 16) + 'px';
+        });
+        
+        // 红色按钮点击事件 - 显示和好场景
+        redBtn.addEventListener('click', function() {
+            initialScene.style.display = "none";
+            happyScene.style.display = "flex";
+            document.body.style.backgroundColor = "#ffd6e7";
+        });
+    </script>
+</body>
+</html>
